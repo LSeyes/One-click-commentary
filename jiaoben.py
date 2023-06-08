@@ -1,5 +1,6 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from tqdm import tqdm
 wd = webdriver.Chrome()
 wd.implicitly_wait(10)
 import time
@@ -27,6 +28,7 @@ passwd.send_keys('')
 time.sleep(8)
 #自己输入验证码
 
+
 loginbutton = wd.find_element(By.CSS_SELECTOR,'#loginButton')
 loginbutton.click()
 
@@ -43,29 +45,33 @@ jiaoxuepinggu.click()
 
 #待评估课程
 no_pinggu_list = wd.find_elements(By.CSS_SELECTOR,'tbody#jxpgtbody tr')
+with tqdm(total=(len(no_pinggu_list))) as p_bar:
+    p_bar.set_description('已完成')
+    with tqdm(total=(len(no_pinggu_list))) as p_bar2:
+        p_bar2.set_description('评估')
+        for i in range(len(no_pinggu_list)):
+            no_pinggu_list = wd.find_elements(By.CSS_SELECTOR, 'tbody#jxpgtbody tr')
+            item = no_pinggu_list[i]
+            x = item.find_element(By.CSS_SELECTOR,'button').text
+            # print(x)
+            p_bar.update(1)
+            if x == '查看':
+                continue
 
-for i in range(len(no_pinggu_list)):
-    no_pinggu_list = wd.find_elements(By.CSS_SELECTOR, 'tbody#jxpgtbody tr')
-    item = no_pinggu_list[i]
-    x = item.find_element(By.CSS_SELECTOR,'button').text
-    print(x)
+            pingu_button = item.find_element(By.CSS_SELECTOR,'td')
+            pingu_button.click()
 
-    if x == '查看':
-        continue
+            time.sleep(2)
+            buttonlist = wd.find_elements(By.CSS_SELECTOR,'tbody tr')
+            buttonlist[2].find_element(By.CSS_SELECTOR, 'div span').click()
+            buttonlist[4].find_element(By.CSS_SELECTOR, 'div span').click()
+            buttonlist[6].find_element(By.CSS_SELECTOR, 'div span').click()
+            buttonlist[8].find_element(By.CSS_SELECTOR, 'div span').click()
+            time.sleep(1)
+            wd.find_element(By.CSS_SELECTOR,'textarea').send_keys('无')
 
-    pingu_button = item.find_element(By.CSS_SELECTOR,'td')
-    pingu_button.click()
+            #按提交
+            wd.find_element(By.CSS_SELECTOR,'#buttonSubmit').click()
 
-    time.sleep(2)
-    buttonlist = wd.find_elements(By.CSS_SELECTOR,'tbody tr')
-    buttonlist[2].find_element(By.CSS_SELECTOR, 'div span').click()
-    buttonlist[4].find_element(By.CSS_SELECTOR, 'div span').click()
-    buttonlist[6].find_element(By.CSS_SELECTOR, 'div span').click()
-    buttonlist[8].find_element(By.CSS_SELECTOR, 'div span').click()
-    time.sleep(1)
-    wd.find_element(By.CSS_SELECTOR,'textarea').send_keys('无')
-
-    #按提交
-    wd.find_element(By.CSS_SELECTOR,'#buttonSubmit').click()
-
-    wd.find_element(By.CSS_SELECTOR,'div.layui-layer-btn a').click()
+            wd.find_element(By.CSS_SELECTOR,'div.layui-layer-btn a').click()
+            p_bar2.update(1)
