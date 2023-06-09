@@ -12,10 +12,10 @@ wd.get(url)
 
 id = wd.find_element(By.CSS_SELECTOR,'#input_username')
 #id.send_keys('你的学号')
-id.send_keys('2020024496')
+id.send_keys('')
 #passwd.send_keys('你的密码')
 passwd = wd.find_element(By.CSS_SELECTOR,'#input_password')
-passwd.send_keys('Qwert12345')
+passwd.send_keys('')
 
 
 
