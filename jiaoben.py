@@ -12,10 +12,10 @@ wd.get(url)
 
 id = wd.find_element(By.CSS_SELECTOR,'#input_username')
 #id.send_keys('你的学号')
-id.send_keys('')
+id.send_keys('2020024496')
 #passwd.send_keys('你的密码')
 passwd = wd.find_element(By.CSS_SELECTOR,'#input_password')
-passwd.send_keys('')
+passwd.send_keys('Qwert12345')
 
 
 
@@ -43,6 +43,11 @@ jiaoxuelist.click()
 jiaoxuepinggu = wd.find_element(By.XPATH,'//*[@id="12580302"]')
 jiaoxuepinggu.click()
 
+#教师黑名单
+#black_name_list = ['某某某','xxx']
+#按这个格式填入
+black_name_list = []
+
 #待评估课程
 no_pinggu_list = wd.find_elements(By.CSS_SELECTOR,'tbody#jxpgtbody tr')
 with tqdm(total=(len(no_pinggu_list))) as p_bar:
@@ -57,6 +62,29 @@ with tqdm(total=(len(no_pinggu_list))) as p_bar:
             p_bar.update(1)
             if x == '查看':
                 continue
+
+            #黑名单教师对应操作！全部不合格
+            if wd.find_element(By.CSS_SELECTOR,'#jxpgtbody tr td:nth-child(3)') in black_name_list:
+                pingu_button = item.find_element(By.CSS_SELECTOR, 'td')
+                pingu_button.click()
+
+                time.sleep(2)
+                buttonlist = wd.find_elements(By.CSS_SELECTOR, 'tbody tr')
+                buttonlist[2].find_element(By.CSS_SELECTOR, 'div:nth-child(4) span').click()
+                buttonlist[4].find_element(By.CSS_SELECTOR, 'div:nth-child(4) span').click()
+                buttonlist[6].find_element(By.CSS_SELECTOR, 'div:nth-child(4) span').click()
+                buttonlist[8].find_element(By.CSS_SELECTOR, 'div:nth-child(4) span').click()
+                time.sleep(1)
+                wd.find_element(By.CSS_SELECTOR, 'textarea').send_keys('你好好思考思考为什么全是不合格')
+
+                #按提交
+                wd.find_element(By.CSS_SELECTOR, '#buttonSubmit').click()
+
+                wd.find_element(By.CSS_SELECTOR, 'div.layui-layer-btn a').click()
+                p_bar2.update(1)
+
+                continue
+
 
             pingu_button = item.find_element(By.CSS_SELECTOR,'td')
             pingu_button.click()
