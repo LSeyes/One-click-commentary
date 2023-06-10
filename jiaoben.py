@@ -25,6 +25,7 @@ passwd.send_keys('')
 # 输完验证码不要点登录
 # 输完验证码不要点登录
 
+#待完善，以后接入自动识别验证码api
 time.sleep(8)
 #自己输入验证码
 
@@ -46,7 +47,24 @@ jiaoxuepinggu.click()
 #教师黑名单
 #black_name_list = ['某某某','xxx']
 #按这个格式填入
-black_name_list = []
+black_name_list0 = []
+with open('black_name_list.txt','r',encoding='UTF8') as f:
+    black_name_list = f.readlines()
+    black_name_list0.extend(black_name_list)
+    print('这是已经在黑名单里面的教师名单')
+    for people in black_name_list0:
+        print(people.splitlines()[0].strip())
+    while True:
+        if input('是否要添加教师进入黑名单中（如果需要添加，请输入0）：') != '0':
+            break
+        new_name = input('请教师名字：') + '\n'
+        if new_name not in black_name_list0:
+            black_name_list0.append(new_name)
+
+with open('black_name_list.txt','w',encoding='UTF8') as f:
+    for info in black_name_list0:
+        f.write(info)
+
 
 #待评估课程
 no_pinggu_list = wd.find_elements(By.CSS_SELECTOR,'tbody#jxpgtbody tr')
@@ -64,7 +82,7 @@ with tqdm(total=(len(no_pinggu_list))) as p_bar:
                 continue
 
             #黑名单教师对应操作！全部不合格
-            if wd.find_element(By.CSS_SELECTOR,'#jxpgtbody tr td:nth-child(3)') in black_name_list:
+            if wd.find_element(By.CSS_SELECTOR,'#jxpgtbody tr td:nth-child(3)') in black_name_list0:
                 pingu_button = item.find_element(By.CSS_SELECTOR, 'td')
                 pingu_button.click()
 
